@@ -90,20 +90,31 @@ int main()
 
 void loadSettings()
 {
-	LPWSTR sizeText = L"0";
-	DWORD countSymbols = 0;
-	char* check = calloc(50, sizeof(char));
-	DWORD data = 0;
+	LPWSTR sizeText = L"123";
+	DWORD countSymbols = sizeof(sizeText+1);
+	//LPWSTR check = calloc(512, sizeof(WCHAR));
+	WCHAR check = L'1';
+	DWORD data = sizeof(check);
+
+
+	DWORD DataType = NULL;
+	DWORD DataLen = 512;
+
 	while (TRUE)
 	{
-		if (RegOpenKeyEx(HKEY_CURRENT_USER, L"cmdSettings\\textSettings", 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS)
+		if (RegOpenKeyEx(HKEY_CURRENT_USER, L"cmdSettings\\textSettings", 0, KEY_QUERY_VALUE, &hKey) == ERROR_SUCCESS)
 		{
-			if (RegQueryValueEx(hKey, L"sizeText", 0, &data, check, &countSymbols) == ERROR_FILE_NOT_FOUND)
+			RegDeleteValueW(hKey, L"sizeText");
+			if (RegQueryValueEx(hKey, L"sizeText", 0, NULL, NULL, NULL) == ERROR_FILE_NOT_FOUND)
 			{
-				RegSetValueEx(hKey, L"sizeText", 0, REG_SZ, sizeText, &countSymbols);
+				RegSetValue(hKey, L"sizeText", 0, REG_SZ, sizeText, countSymbols);
 				break;
 			}
-		}
+			/*else
+			{
+				RegQueryValueEx(hKey, L"sizeText", 0, NULL, &check, &data);
+			}*/
+ 		}
 		else
 		{
 			RegCreateKeyEx(HKEY_CURRENT_USER, L"cmdSettings\\textSettings", 0, NULL, 0, 0, NULL, &hKey, NULL);
